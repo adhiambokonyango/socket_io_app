@@ -1,6 +1,7 @@
 var express = require("express");
 var bodyParser = require("body-parser");
-
+var mongoose = require("mongoose");
+var dbUrl = "mongodb+srv://root:31547207@cluster0.ar3uy.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 
 var app = express();
 var http = require("http").Server(app);
@@ -39,6 +40,9 @@ io.on("connection", (socket) => {
     console.log("a user connected")
 });
 
+mongoose.connect(dbUrl, (err) => {
+    console.log("db connected", err);
+})
 
 var server = http.listen(3000, ()=>{
     console.log("server started on port", server.address().port)
