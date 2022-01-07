@@ -12,8 +12,11 @@ app.use(express.static(__dirname ));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
-
-
+var Message = mongoose.model("Message", {
+    name: String,
+    message: String
+})
+/** 
 var messages = [
 
     {
@@ -24,16 +27,40 @@ var messages = [
         name: "biko",
         message: "i love you too"
     }
-]
+] */
 
 app.get("/messages", (req, res)=>{
-res.send(messages);
+    Message.find({}, (err, messages)=>{
+        res.send(messages);
+    })
+
 })
 
 app.post("/post_messages", (req, res)=>{
-    messages.push(req.body);
-    io.emit('message', req.body);
-    res.sendStatus(200);
+    var message = new Message(req.body);
+    message.save().then(
+        ()=>{
+          //  messages.push(req.body);
+            io.emit('message', req.body);
+            res.sendStatus(200);
+        }
+    ).catch((err)=>{
+        res.sendStatus(500);
+        return console.error(err)
+    })
+
+   
+    })
+
+    app.post("/trycatch", (req, res)=>{
+        try{
+
+        } catch (error){
+            res.sendStatus(500);
+        return console.error(err)
+        } finally {
+            // executed regardless
+        }
     })
 
 io.on("connection", (socket) => {
